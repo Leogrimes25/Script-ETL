@@ -92,7 +92,22 @@ def load_produtos():
 
 
 def load_vendas():
-    print("Data Included")
+    excel_path = r"C:\Users\Vinicius Oliveira\Downloads\vendas.xlsx"
+    df = pd.read_excel(excel_path)
+    conn = get_connection()
+    cursor = conn.cursor()
+    for _, row in df.iterrows():
+        cursor.execute(
+            """ 
+        INSERT INTO vendas(id_venda,data_venda, id_loja, id_produto, quantidade, valor_unitario, canal_venda, 
+        status_venda)
+        VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
+        """, (row['id_venda'], row['data_venda'], row['id_loja'], row['id_produto'], row['quantidade'],
+              row['valor_unitario'], row['canal_venda'], row['status_venda'])
+        )
+    conn.commit()
+    conn.close()
+    print("✅ Vendas carregadas com sucesso.")
 
 
 def menu():
