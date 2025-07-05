@@ -5,25 +5,23 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_HOST = os.getenv('DB_HOST')
-DB_PORT = os.getenv('DB_PORT')
-DB_NAME = os.getenv('DB_NAME')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
 
-connection = psycopg2.connect(
-    host=DB_HOST,
-    port=DB_PORT,
-    dbname=DB_NAME,
-    user=DB_USER,
-    password=DB_PASSWORD
-)
-cursor = connection.cursor()
+def get_connection():
+    return psycopg2.connect(
+        host=os.getenv('DB_HOST'),
+        port=os.getenv('DB_PORT'),
+        dbname=os.getenv('DB_NAME'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD')
+    )
 
 
 def load_loja():
     excel_path = r"C:\Users\Vinicius Oliveira\Downloads\produtos.xlsx"
     df = pd.read_excel(excel_path)
+
+    conn = get_connection()
+    cursor = conn.cursor()
     for _, row in df.iterrows():
         cursor.execute(
             """ 
@@ -31,14 +29,18 @@ def load_loja():
         VALUES(%s,%s,%s,%s)
         """, (row['id_loja'], row['nome_loja'], row['cidade'], row['estado'])
         )
-
-    connection.commit()
-    print("Data Included !")
+    conn.commit()
+    conn.close()
+    print("✅ Lojas carregadas com sucesso.")
 
 
 def load_user():
     excel_path = r"C:\Users\Vinicius Oliveira\Downloads\usuário.xlsx"
     df = pd.read_excel(excel_path)
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
     for _, row in df.iterrows():
         cursor.execute(
             """ 
@@ -48,13 +50,18 @@ def load_user():
 
         )
 
-    connection.commit()
-    print("Data Included !")
+    conn.commit()
+    conn.close()
+    print("✅ Usuários carregadas com sucesso.")
 
 
 def load_metas():
     excel_path = r"C:\Users\Vinicius Oliveira\Downloads\metas.xlsx"
     df = pd.read_excel(excel_path)
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
     for _, row in df.iterrows():
         cursor.execute(
             """ 
@@ -62,13 +69,16 @@ def load_metas():
         VALUES(%s,%s,%s,%s)
         """, (row['id_meta'], row['id_loja'], row['mes_ano'], row['meta_vendas'])
         )
-    connection.commit()
-    print("Data Included")
+    conn.commit()
+    conn.close()
+    print("✅ Metas carregadas com sucesso.")
 
 
 def load_produtos():
     excel_path = r"C:\Users\Vinicius Oliveira\Downloads\produtos.xlsx"
     df = pd.read_excel(excel_path)
+    conn = get_connection()
+    cursor = conn.cursor()
     for _, row in df.iterrows():
         cursor.execute(
             """ 
@@ -76,8 +86,9 @@ def load_produtos():
         VALUES(%s,%s,%s,%s,%s)
         """, (row['id_produto'], row['nome_produto'], row['categoria'], row['preco_venda'], row['marca'])
         )
-    connection.commit()
-    print("Data Included")
+    conn.commit()
+    conn.close()
+    print("✅ Produtos carregadas com sucesso.")
 
 
 def load_vendas():
