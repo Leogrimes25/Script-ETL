@@ -37,14 +37,15 @@ def load_loja():
 
 
 def load_user():
-    excel_path = r"C:\Users\Vinicius Oliveira\Downloads\produtos.xlsx"
+    excel_path = r"C:\Users\Vinicius Oliveira\Downloads\usuário.xlsx"
     df = pd.read_excel(excel_path)
     for _, row in df.iterrows():
         cursor.execute(
             """ 
-        INSERT INTO usuario(id_usuario,email, nome_usuario, perfil, loja_acesso)
+        INSERT INTO usuario(id_usuario, nome_usuario, perfil, loja_acesso,email)
         VALUES(%s,%s,%s,%s,%s)
-        """, (row['id_usuario'], row['email'], row['nome_usuario'], row['perfil'], row['loja_acesso'])
+        """, (row['id_usuario'], row['nome_usuario'], row['perfil'], row['loja_acesso'], row['email'],)
+
         )
 
     connection.commit()
@@ -52,10 +53,30 @@ def load_user():
 
 
 def load_metas():
+    excel_path = r"C:\Users\Vinicius Oliveira\Downloads\metas.xlsx"
+    df = pd.read_excel(excel_path)
+    for _, row in df.iterrows():
+        cursor.execute(
+            """ 
+        INSERT INTO metas(id_meta,id_loja,mes_ano,meta_vendas)
+        VALUES(%s,%s,%s,%s)
+        """, (row['id_meta'], row['id_loja'], row['mes_ano'], row['meta_vendas'])
+        )
+    connection.commit()
     print("Data Included")
 
 
 def load_produtos():
+    excel_path = r"C:\Users\Vinicius Oliveira\Downloads\produtos.xlsx"
+    df = pd.read_excel(excel_path)
+    for _, row in df.iterrows():
+        cursor.execute(
+            """ 
+        INSERT INTO produtos(id_produto,nome_produto, categoria, preco_venda, marca)
+        VALUES(%s,%s,%s,%s,%s)
+        """, (row['id_produto'], row['nome_produto'], row['categoria'], row['preco_venda'], row['marca'])
+        )
+    connection.commit()
     print("Data Included")
 
 
